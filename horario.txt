@@ -1,0 +1,133 @@
+Domingo:
+05:00 
+06:00 
+07:00 
+08:00 
+09:00 
+10:00 
+11:00 
+12:00 
+13:00 
+14:00 
+15:00 
+16:00 trabajo
+17:00 trabajo
+18:00 
+19:00 
+20:00 
+21:00 
+22:00 
+Lunes:
+05:00 
+06:00 
+07:00 
+08:00 
+09:00 organizacion
+10:00 transporte
+11:00 transporte
+12:00 habilidades gerenciales
+13:00 habilidades gerenciales
+14:00 lab informatica 2
+15:00 lab informatica 2
+16:00 lab informatica 2
+17:00 transporte
+18:00 transporte
+19:00 
+20:00 
+21:00 
+22:00 
+Martes:
+05:00 organizacion
+06:00 transporte
+07:00 transporte
+08:00 informatica 2
+09:00 informatica 2
+10:00 
+11:00 
+12:00 matematicas especiales
+13:00 matematicas especiales
+14:00 fisica de ondas
+15:00 fisica de ondas
+16:00 transporte
+17:00 transporte
+18:00 
+19:00 
+20:00 
+21:00 
+22:00 
+Miercoles:
+05:00 
+06:00 
+07:00 
+08:00 probabilidad y estadistica
+09:00 probabilidad y estadistica
+10:00 
+11:00 
+12:00 habilidades gerenciales
+13:00 habilidades gerenciales
+14:00 
+15:00 
+16:00 
+17:00 
+18:00 
+19:00 
+20:00 
+21:00 
+22:00 
+Jueves:
+05:00 organizacion
+06:00 transporte
+07:00 transporte
+08:00 informatica 2
+09:00 informatica 2
+10:00 
+11:00 
+12:00 matematicas especiales
+13:00 matematicas especiales
+14:00 fisica de ondas
+15:00 fisica de ondas
+16:00 transporte
+17:00 transporte
+18:00 
+19:00 
+20:00 
+21:00 
+22:00 
+Viernes:
+05:00 
+06:00 
+07:00 
+08:00 probabilidad y estadistica
+09:00 probabilidad y estadistica
+10:00 
+11:00 
+12:00 
+13:00 
+14:00 
+15:00 
+16:00 
+17:00 trabajo
+18:00 trabajo
+19:00 trabajo
+20:00 
+21:00 
+22:00 
+Sabado:
+05:00 
+06:00 
+07:00 
+08:00 
+09:00 
+10:00 
+11:00 
+12:00 
+13:00 
+14:00 trabajo
+15:00 trabajo
+16:00 trabajo
+17:00 trabajo
+18:00 trabajo
+19:00 trabajo
+20:00 trabajo
+21:00 trabajo
+22:00 trabajo
