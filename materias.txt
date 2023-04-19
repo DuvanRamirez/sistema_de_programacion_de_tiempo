@@ -1,0 +1,8 @@
+
+PLAN DE ESTUDIOS VERSION 4 PROGRAMA INGENIERIA ELECTRONICA
+
+2547200 Informatica 2: 5,7
+2536300 Fisica de Ondas: 4,4
+2535330 Probabilidad y Estadistica: 4,4
+2547400 Matematicas Especiales: 4,4
+2517205 Habilidades Gerenciales: 4,4

@@ -1,3 +1,4 @@
+
 Domingo:
 05:00 
 06:00 
@@ -17,7 +18,8 @@ Domingo:
 20:00 
 21:00 
 22:00 
-Lunes:
+
+Lunes::
 05:00 
 06:00 
 07:00 
@@ -36,6 +38,7 @@ Lunes:
 20:00 
 21:00 
 22:00 
+
 Martes:
 05:00 organizacion
 06:00 transporte
@@ -55,6 +58,7 @@ Martes:
 20:00 
 21:00 
 22:00 
+
 Miercoles:
 05:00 
 06:00 
@@ -74,6 +78,7 @@ Miercoles:
 20:00 
 21:00 
 22:00 
+
 Jueves:
 05:00 organizacion
 06:00 transporte
@@ -93,6 +98,7 @@ Jueves:
 20:00 
 21:00 
 22:00 
+
 Viernes:
 05:00 
 06:00 
@@ -112,6 +118,7 @@ Viernes:
 20:00 
 21:00 
 22:00 
+
 Sabado:
 05:00 
 06:00 
