@@ -7,8 +7,9 @@ int Menu(int,int);
 int mostrar_horario();
 int sugiere_horario();
 int disponibilidad_horaria();
-int disponibilidad_materia(char*,bool*);
-int disponibilidad_Agendar_DH(char*,char*);
+int disponibilidad_materia(char*,bool*,char*);
+int disponibilidad_Agendar_DH(char*,char*,char*);
+int restar_horas(char*);
 
 int main()
 {
@@ -44,25 +45,37 @@ int main()
                 Menu(opcion,menu);//llamado funcion menu
                 system("cls");
                 cout<<endl;
-                //psra saber si la materia esta registrada
+                //para saber si la materia esta registrada
                 bool esta=false;
                 char materia_escrita[25];
+                char materia_registrada;
                 while(esta==false){
                     cout<<"Codigo o Nombre de la materia: ";
-                    cin>>materia_escrita;
-                    disponibilidad_materia(materia_escrita,&esta);
+                    //cin>>materia_escrita;
+                    cin.getline(materia_escrita, sizeof(materia_escrita));
+                    disponibilidad_materia(materia_escrita,&esta,&materia_registrada);//funcion para saber si la materia esta, y para obtener el nombre de esa materia
                     cout<<endl;
                 }
-                cout<<"Formato del dia: nombre"<<endl;
                 char dia[10];
+                char hora[6];
+                //Menu para poner el dia y la hora a registrar
+                cout<<"Formato del dia: nombre"<<endl;
                 cout<<endl<<"Dia: ";
                 cin>>dia;
                 system("cls");
                 cout<<endl<<"Formato de la Hora: 24:00"<<endl;
-                char hora[6];
                 cout<<endl<<"Hora: ";
                 cin>>hora;
-                disponibilidad_Agendar_DH(dia,hora);//funcion para agendar hora
+                //tecla para continuar
+                int continuar=0;
+                while(continuar==0){
+                    cout<<endl;
+                    cout<<"1. Continuar: ";
+                    cin>>continuar;
+                }
+                system("cls");
+                int H_encontrada=disponibilidad_Agendar_DH(dia,hora,&materia_registrada);//funcion para agendar hora, si no esta disponible da la opcion de cambiar el contenido o no
+                if(H_encontrada>0)restar_horas(&materia_registrada);//funcion para restar horas de estudio, abre el documento y cambia H estudio
             }
 
 
@@ -72,7 +85,7 @@ int main()
 
     return 0;
 }
-
+//Funcion para los menus principales
 int Menu(int opcion,int menu){
     switch(menu){
     case 1:
@@ -81,7 +94,7 @@ int Menu(int opcion,int menu){
             cout<<endl;
             cout<<"Menu principal:"<<endl;
             cout<<endl;
-            cout<<"1. Ver Horario"<<endl;
+            cout<<"1. Ver Horario Agendado"<<endl;
             cout<<"2. Agendar Horario"<<endl;
             cout<<"3. Salir"<<endl;
             cout<<endl;
@@ -107,7 +120,7 @@ int Menu(int opcion,int menu){
 
     return opcion;
 }
-//funcion para mostrar horario
+//funcion para mostrar horario agendado
 int mostrar_horario(){
     system("cls");
     // Abrir el archivo para lectura
@@ -133,6 +146,7 @@ int mostrar_horario(){
   archivo.close();
   cout<<endl;
 }
+//funcion para sugerir horas para estudiar dependiendo de la materia
 int sugiere_horario(){
     system("cls");
     // Abrir el archivo para lectura
@@ -195,6 +209,7 @@ int sugiere_horario(){
   // Cierra el archivo
   archivo.close();
 }
+//funcion para dar horas disponibles, horas sin contenido
 int disponibilidad_horaria(){
     // Abrir el archivo para lectura
     ifstream archivo("C:/Users/duvan/Documents/proyectos c++/sistema_de_programacion_de_tiempo/horario.txt");
@@ -205,7 +220,7 @@ int disponibilidad_horaria(){
     }
 
     cout<<endl;
-    cout<<"Horario disponible para agendar:"<<endl;
+    cout<<"Horas disponible para agendar:"<<endl;
     char contenido_linea[150];
     int longitud_linea;
     while (archivo.getline(contenido_linea, 150)){//lee todas las lineas de archivo
@@ -236,7 +251,8 @@ int disponibilidad_horaria(){
   archivo.close();
   cout<<endl;
 }
-int disponibilidad_materia(char *materia_escrita,bool *esta){
+//funcion para saber si la materia esta registrada en codigo o en nombre
+int disponibilidad_materia(char *materia_escrita,bool *esta, char *materia_registrada){
     system("cls");
     // Abrir el archivo para lectura
     ifstream archivo("C:/Users/duvan/Documents/proyectos c++/sistema_de_programacion_de_tiempo/materias.txt");
@@ -251,6 +267,8 @@ int disponibilidad_materia(char *materia_escrita,bool *esta){
     int contador_validar=0;//se usa para validar si se encuentra la materia
     int contador_validar2=0;//se usa para validar si se encuentra la materia
 
+
+
     while (archivo.getline(contenido_linea, 150)){//lee todas las lineas de archivo
         linea++;
         longitud_linea = 0;
@@ -258,32 +276,59 @@ int disponibilidad_materia(char *materia_escrita,bool *esta){
         while (contenido_linea[longitud_linea] != '\0' && contenido_linea[longitud_linea] != '\n'){
             longitud_linea++;
         }
+        int tamaño_materia=longitud_linea-15;//15 son los caracteres fijos
 
-        if(linea>3){//toma las lineas mayores de 3
+        if(linea>4){//toma las lineas mayores de 3
             if(longitud_linea>7){
-                int tamaño_materia=longitud_linea-13;//13 son los caracteres fijos
-                char materia[tamaño_materia];//13 son los caracteres fijos
-                //ciclo para agregar las materias
-                for (int i = 8; i<longitud_linea; i++) {
-                    if(contenido_linea[i]==':')break;
-                    materia[i-8]=contenido_linea[i];
-                }
-                char codigo[7];//7 es numero fijo del codigo
+                char materia;
+                char *materiapr=&materia;
+                char codigo[7];
+
                 //ciclo para agregar el codigo de materias
                 for (int i = 0; i<7; i++) {
                     codigo[i]=contenido_linea[i];
                 }
+                //ciclo para agregar las materias
+                for (int i = 8; i<longitud_linea; i++) {
+                    if(contenido_linea[i]==':')break;
+                    *(materiapr+(i-8))=contenido_linea[i];
+                }
                 contador_validar=0;//se usa para validar si se encuentra la materia
                 //Ciclo de comparacion para saber si esta la materia
                 for (int j = 0; j<tamaño_materia; j++) {
-                    if(*(materia_escrita+j)==materia[j])contador_validar++;
+                    if(*(materia_escrita+j)==*(materiapr+j))contador_validar++;
                 }
                 contador_validar2=0;//se usa para validar si se encuentra la materia
                 //Ciclo de comparacion para saber si esta la materia
-                for (int j = 0; j<tamaño_materia; j++) {
-                    if(*(materia_escrita+j)==codigo[j])contador_validar2++;
+                for (int k = 0; k<7; k++) {
+                    if(*(materia_escrita+k)==codigo[k])contador_validar2++;
                 }
-                if(contador_validar>4 || contador_validar2>4){*esta=true;break;}
+                if(contador_validar>4){
+                    //para añadir la materia a materia registrada
+                    //llena la cadena de espacios
+                    for (int i = 0; i<longitud_linea+10; i++) {
+                        *(materia_registrada+i)=' ';
+                    }
+                    //llena la cadena con la materia
+                    for (int i = 0; i<tamaño_materia; i++) {
+                        *(materia_registrada+i)=*(materiapr+i);
+                    }
+                    *esta=true;
+                    break;
+                }
+                if(contador_validar2>6){
+                    //para añadir la materia a materia registrada
+                    //llena la cadena de espacios
+                    for (int i = 0; i<longitud_linea+10; i++) {
+                        *(materia_registrada+i)=' ';
+                    }
+                    //llena la cadena con la materia
+                    for (int i = 0; i<tamaño_materia; i++) {
+                        *(materia_registrada+i)=*(materiapr+i);
+                    }
+                    *esta=true;
+                    break;
+                }
             }
         }
 
@@ -294,7 +339,8 @@ int disponibilidad_materia(char *materia_escrita,bool *esta){
   // Cierra el archivo
   archivo.close();
 }
-int disponibilidad_Agendar_DH(char* dia,char* hora){
+//funcion para saber si hay disponibilidad de hora, si no la hay, da la posibilidad de cabiar el contenido
+int disponibilidad_Agendar_DH(char* dia,char* hora,char* materia_registrada){
     system("cls");
     // Abrir el archivo para lectura y escritura
     ifstream archivo("C:/Users/duvan/Documents/proyectos c++/sistema_de_programacion_de_tiempo/horario.txt");
@@ -310,6 +356,7 @@ int disponibilidad_Agendar_DH(char* dia,char* hora){
     bool dia_encontrado=false;
     bool hora_encontrada=false;
     int linea_escrita=0;
+    int H_encontrada=0;
 
     while (archivo.getline(contenido_linea, 150)){//lee todas las lineas de archivo
         linea_escrita=0;
@@ -340,11 +387,23 @@ int disponibilidad_Agendar_DH(char* dia,char* hora){
                 }
                 if(contador_validar2==5){//se encontro la hora
                     if(longitud_linea<7){
-                        archivo_temporal<<hora<<" Estudiar"<<endl;
+                        archivo_temporal<<hora<<" Estudiar "<<materia_registrada<<endl;
                         linea_escrita++;
                     }
-                    else cout<<endl<<"<<< Hora no disponible >>>"<<endl;
+                    else{
+                        int si_no;
+                        cout<<endl<<"<<< Hora no disponible >>>"<<endl;
+                        cout<<endl<<"Quieres remplazar la actividad?"<<endl;
+                        cout<<endl<<"1. Si      2. No "<<endl;
+                        cin>>si_no;
+                        if(si_no==1){
+                            archivo_temporal<<hora<<" Estudiar "<<materia_registrada<<endl;
+                            linea_escrita++;
+                        }
+                        system("cls");
+                    }
                     hora_encontrada=true;
+                    H_encontrada++;
                 }
             }
         }
@@ -359,6 +418,69 @@ int disponibilidad_Agendar_DH(char* dia,char* hora){
     const char* archivo_nuevo = "C:/Users/duvan/Documents/proyectos c++/sistema_de_programacion_de_tiempo/horario.txt";
     remove(archivo1);
     rename(archivo_actual,archivo_nuevo);
+    return H_encontrada;
+}
+//funcion para restar horas disponibles para estudiar por materia, para cambiar este el el archivo
+int restar_horas(char* materia_registrada){
+    system("cls");
+    // Abrir el archivo para lectura y escritura
+    ifstream archivo("C:/Users/duvan/Documents/proyectos c++/sistema_de_programacion_de_tiempo/materias.txt");
+    ofstream archivo_temporal("C:/Users/duvan/Documents/proyectos c++/sistema_de_programacion_de_tiempo/materias_temporal.txt");
+    // Verifica si el archivo se abrio correctamente
+    if (!archivo.is_open()) {
+        cout << "Error al abrir el archivo de lectura." << endl;
+        return 1;
+    }
+    char contenido_linea[150];
+    int longitud_linea;
+    int linea=0;
+    bool materia_encontrada=false;
+    bool hora_registrada=false;
+    int linea_escrita=0;
 
-    cout<<endl;
+    while (archivo.getline(contenido_linea, 150)){//lee todas las lineas de archivo
+        linea_escrita=0;
+        linea++;
+        longitud_linea = 0;
+        //cuenta caracteres hasta llegar al final de la línea \n o al final de la cadena \0
+        while (contenido_linea[longitud_linea] != '\0' && contenido_linea[longitud_linea] != '\n'){
+            longitud_linea++;
+        }
+        int tamaño_materia=longitud_linea-15;//13 son los caracteres fijos
+        if(linea>4){
+            //para buscar el dia
+            char valido;
+            if(materia_encontrada==false){
+                int contador_validar=0;//para validar que encontro el dia
+                for (int i=0; i<longitud_linea; i++) {
+                    if(contenido_linea[i]==':'){valido=':';break;}
+                    if(*(materia_registrada+i)==contenido_linea[i+8]) contador_validar++;
+                }
+                if(contador_validar>5 && valido==':')materia_encontrada=true;
+            }
+            int horario_estudio_asignado=0;// horas que han sido asignadas
+            //para agregar las horas de estudio asignado por el usuario
+            horario_estudio_asignado=contenido_linea[14+tamaño_materia]-'0';
+
+            if(materia_encontrada==true){
+                if(hora_registrada==false){
+                    int suma=horario_estudio_asignado+1;
+                    for (int i=0; i<15+tamaño_materia; i++) {
+                        if(i==14+tamaño_materia){archivo_temporal<<suma<<endl;break;}
+                        archivo_temporal<<contenido_linea[i];
+                    }
+                    linea_escrita++;
+                    hora_registrada=true;
+                }
+            }
+        }
+        if(linea_escrita==0)archivo_temporal<<contenido_linea<<endl;
+    }
+    archivo.close();
+    archivo_temporal.close();
+    const char* archivo1 = "C:/Users/duvan/Documents/proyectos c++/sistema_de_programacion_de_tiempo/materias.txt";
+    const char* archivo_actual = "C:/Users/duvan/Documents/proyectos c++/sistema_de_programacion_de_tiempo/materias_temporal.txt";
+    const char* archivo_nuevo = "C:/Users/duvan/Documents/proyectos c++/sistema_de_programacion_de_tiempo/materias.txt";
+    remove(archivo1);
+    rename(archivo_actual,archivo_nuevo);
 }
