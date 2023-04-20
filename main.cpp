@@ -5,12 +5,13 @@ using namespace std;
 
 int Menu(int,int);
 int mostrar_horario();
-int sugiere_horario(int);
+int sugiere_horario();
 int disponibilidad_horaria();
-char disponibilidad_materia(char*);
+int disponibilidad_materia(char*,bool*);
+int disponibilidad_Agendar_DH(char*,char*);
 
 int main()
-{   int horario_estudio_asignado=0;// horas que han sido asignadas
+{
     //menu 1
     int menu=1;
     while(menu==1){
@@ -26,7 +27,7 @@ int main()
             }
         }
         else if(opcion==2){
-            sugiere_horario(horario_estudio_asignado);//llamado funcion para sugerir horario
+            sugiere_horario();//llamado funcion para sugerir horario
             disponibilidad_horaria();//llamado funcion para mostrar disponibilidad horaria
             //tecla para continuar
             int continuar=0;
@@ -35,6 +36,7 @@ int main()
                 cout<<"1. Continuar: ";
                 cin>>continuar;
             }
+            system("cls");
             //menu 2
             int menu=2;
             while(menu==2){
@@ -42,17 +44,25 @@ int main()
                 Menu(opcion,menu);//llamado funcion menu
                 system("cls");
                 cout<<endl;
+                //psra saber si la materia esta registrada
+                bool esta=false;
                 char materia_escrita[25];
-                cout<<"Codigo o Nombre de la materia: ";
-                cin>>materia_escrita;
-                disponibilidad_materia(materia_escrita);
-                cout<<endl;
+                while(esta==false){
+                    cout<<"Codigo o Nombre de la materia: ";
+                    cin>>materia_escrita;
+                    disponibilidad_materia(materia_escrita,&esta);
+                    cout<<endl;
+                }
+                cout<<"Formato del dia: nombre"<<endl;
                 char dia[10];
-                cout<<"Dia: ";
+                cout<<endl<<"Dia: ";
                 cin>>dia;
-                char hora[10];
-                cout<<"Formato de Hora: 05:00 a 22:00 : ";
+                system("cls");
+                cout<<endl<<"Formato de la Hora: 24:00"<<endl;
+                char hora[6];
+                cout<<endl<<"Hora: ";
                 cin>>hora;
+                disponibilidad_Agendar_DH(dia,hora);//funcion para agendar hora
             }
 
 
@@ -82,7 +92,6 @@ int Menu(int opcion,int menu){
         break;
     case 2:
         while(opcion>1){
-            system("cls");
             cout<<endl;
             cout<<"Menu Para Agendar:"<<endl;
             cout<<endl;
@@ -98,6 +107,7 @@ int Menu(int opcion,int menu){
 
     return opcion;
 }
+//funcion para mostrar horario
 int mostrar_horario(){
     system("cls");
     // Abrir el archivo para lectura
@@ -123,7 +133,7 @@ int mostrar_horario(){
   archivo.close();
   cout<<endl;
 }
-int sugiere_horario(int horario_estudio_asignado){
+int sugiere_horario(){
     system("cls");
     // Abrir el archivo para lectura
     ifstream archivo("C:/Users/duvan/Documents/proyectos c++/sistema_de_programacion_de_tiempo/materias.txt");
@@ -135,7 +145,6 @@ int sugiere_horario(int horario_estudio_asignado){
     char contenido_linea[150];
     int linea=0;
     int longitud_linea;
-
     int horario_estudio;
 
     while (archivo.getline(contenido_linea, 150)){//lee todas las lineas de archivo
@@ -146,11 +155,11 @@ int sugiere_horario(int horario_estudio_asignado){
             longitud_linea++;
         }
 
-        if(longitud_linea>55 || longitud_linea==0)cout <<contenido_linea<<endl;//imprime las lineas descriptivas
+        if((longitud_linea>55 && longitud_linea<60) || longitud_linea==0)cout <<contenido_linea<<endl;//imprime las lineas descriptivas
 
-        if(linea>3){//toma las lineas mayores de 3
+        if(linea>4){//toma las lineas mayores de 3
             if(longitud_linea>7){
-                int tamaño_materia=longitud_linea-13;//13 son los caracteres fijos
+                int tamaño_materia=longitud_linea-15;//13 son los caracteres fijos
                 char materia[tamaño_materia];//13 son los caracteres fijos
                 //ciclo para agregar las materias
                 for (int i = 8; i<longitud_linea; i++) {
@@ -158,16 +167,19 @@ int sugiere_horario(int horario_estudio_asignado){
                     materia[i-8]=contenido_linea[i];
                 }
                 int creditos=0;
-                //ciclo para añadir creditos de la materia
-                for (int i = 10+tamaño_materia; i<11+tamaño_materia; i++) {
-                    creditos=contenido_linea[i]-'0';
-                }
+                //añadir creditos de la materia
+                creditos=contenido_linea[10+tamaño_materia]-'0';
+
                 int Hclase=0;
-                //ciclo para agregar las horas de clase por materia
-                for (int i = 12+tamaño_materia; i<longitud_linea; i++) {
-                    Hclase=contenido_linea[i]-'0';
-                }
+                //agregar las horas de clase por materia
+                Hclase=contenido_linea[12+tamaño_materia]-'0';
+
+                int horario_estudio_asignado=0;// horas que han sido asignadas
+                //ciclo para agregar las horas de estudio asignado por el usuario
+                horario_estudio_asignado=contenido_linea[14+tamaño_materia]-'0';
+
                 horario_estudio=((48*creditos)/16)-Hclase;
+
                 //Imprime las horas de estudio requeridas
                 cout<<"Se sugiere "<<horario_estudio<<" horas de estudio para ";
                 for (int i = 0; i<tamaño_materia; i++) {
@@ -224,7 +236,7 @@ int disponibilidad_horaria(){
   archivo.close();
   cout<<endl;
 }
-char disponibilidad_materia(char *materia_escrita){
+int disponibilidad_materia(char *materia_escrita,bool *esta){
     system("cls");
     // Abrir el archivo para lectura
     ifstream archivo("C:/Users/duvan/Documents/proyectos c++/sistema_de_programacion_de_tiempo/materias.txt");
@@ -271,14 +283,82 @@ char disponibilidad_materia(char *materia_escrita){
                 for (int j = 0; j<tamaño_materia; j++) {
                     if(*(materia_escrita+j)==codigo[j])contador_validar2++;
                 }
-                if(contador_validar>5 || contador_validar2>5)break;
+                if(contador_validar>4 || contador_validar2>4){*esta=true;break;}
             }
         }
 
 
     }
-    if(contador_validar<6 && contador_validar2<6){cout<<endl;cout<<"Materia no registrada"<<endl;}
+    if(contador_validar<5 && contador_validar2<5)cout<<endl<<"<<< Materia no registrada >>>"<<endl;
 
   // Cierra el archivo
   archivo.close();
+}
+int disponibilidad_Agendar_DH(char* dia,char* hora){
+    system("cls");
+    // Abrir el archivo para lectura y escritura
+    ifstream archivo("C:/Users/duvan/Documents/proyectos c++/sistema_de_programacion_de_tiempo/horario.txt");
+    ofstream archivo_temporal("C:/Users/duvan/Documents/proyectos c++/sistema_de_programacion_de_tiempo/horario_temporal.txt");
+    // Verifica si el archivo se abrio correctamente
+    if (!archivo.is_open()) {
+        cout << "Error al abrir el archivo de lectura." << endl;
+        return 1;
+    }
+    char contenido_linea[150];
+    int longitud_linea;
+    int linea=0;
+    bool dia_encontrado=false;
+    bool hora_encontrada=false;
+    int linea_escrita=0;
+
+    while (archivo.getline(contenido_linea, 150)){//lee todas las lineas de archivo
+        linea_escrita=0;
+        linea++;
+        longitud_linea = 0;
+        //cuenta caracteres hasta llegar al final de la línea \n o al final de la cadena \0
+        while (contenido_linea[longitud_linea] != '\0' && contenido_linea[longitud_linea] != '\n'){
+            longitud_linea++;
+        }
+
+        //para buscar el dia
+        char valido;
+        if(dia_encontrado==false){
+            int contador_validar=0;//para validar que encontro el dia
+            for (int i=0; i<longitud_linea; i++) {
+                if(contenido_linea[i]==':'){valido=':';break;}
+                if(*(dia+i)==contenido_linea[i]) contador_validar++;
+
+            }
+            if(contador_validar>3 && valido==':')dia_encontrado=true;
+        }
+        if(dia_encontrado==true){
+            if(hora_encontrada==false){
+                //para buscar hora
+                int contador_validar2=0;//para validar que encontro la hora
+                for (int i=0; i<6; i++) {
+                    if(*(hora+i)==contenido_linea[i])contador_validar2++;
+                }
+                if(contador_validar2==5){//se encontro la hora
+                    if(longitud_linea<7){
+                        archivo_temporal<<hora<<" Estudiar"<<endl;
+                        linea_escrita++;
+                    }
+                    else cout<<endl<<"<<< Hora no disponible >>>"<<endl;
+                    hora_encontrada=true;
+                }
+            }
+        }
+        if(linea_escrita==0)archivo_temporal<<contenido_linea<<endl;
+    }
+    if(dia_encontrado==false)cout<<endl<<"<<< Dia Erroneo >>>"<<endl;
+    if(hora_encontrada==false) cout<<endl<<"<<< Hora no disponible >>>"<<endl;
+    archivo.close();
+    archivo_temporal.close();
+    const char* archivo1 = "C:/Users/duvan/Documents/proyectos c++/sistema_de_programacion_de_tiempo/horario.txt";
+    const char* archivo_actual = "C:/Users/duvan/Documents/proyectos c++/sistema_de_programacion_de_tiempo/horario_temporal.txt";
+    const char* archivo_nuevo = "C:/Users/duvan/Documents/proyectos c++/sistema_de_programacion_de_tiempo/horario.txt";
+    remove(archivo1);
+    rename(archivo_actual,archivo_nuevo);
+
+    cout<<endl;
 }
